@@ -9,26 +9,32 @@ async function main() {
   let deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
 
   // WNativeTokenAddress
-  const WNativeTokenAddress = '0x6E2542aFC68a1697FeB2810437DF9409D3b93493';
+  const WNativeTokenAddress = '0x5d0fa4c5668e5809c83c95a7cef3a9dd7c68d4fe';
   const signers = await hre.ethers.getSigners();
   const ProxyAdmin = signers[0].address;
 
   deploysData.wrapped = WNativeTokenAddress;
 
-  const entryPointFactory = await hre.ethers.getContractFactory('AlgebraCustomPoolEntryPoint')
-  const entryPoint = await entryPointFactory.deploy(deploysData.factory)
+  const entryPointFactory = await hre.ethers.getContractFactory('AlgebraCustomPoolEntryPoint');
+  const entryPoint = await entryPointFactory.deploy(deploysData.factory);
 
-  await entryPoint.waitForDeployment()
+  await entryPoint.waitForDeployment();
 
-  deploysData.entryPoint = entryPoint.target
-  console.log('EntryPoint deployed to:', entryPoint.target)
+  deploysData.entryPoint = entryPoint.target;
+  console.log('EntryPoint deployed to:', entryPoint.target);
 
-  const factory = await hre.ethers.getContractAt(AlgebraFactoryComplied.abi, deploysData.factory)
-  
-  const deployerRole = await factory.grantRole("0xc9cf812513d9983585eb40fcfe6fd49fbb6a45815663ec33b30a6c6c7de3683b", entryPoint.target);
-  await deployerRole.wait()
-  const administratorRole = await factory.grantRole("0xb73ce166ead2f8e9add217713a7989e4edfba9625f71dfd2516204bb67ad3442", entryPoint.target);
-  await administratorRole.wait()
+  const factory = await hre.ethers.getContractAt(AlgebraFactoryComplied.abi, deploysData.factory);
+
+  const deployerRole = await factory.grantRole(
+    '0xc9cf812513d9983585eb40fcfe6fd49fbb6a45815663ec33b30a6c6c7de3683b',
+    entryPoint.target
+  );
+  await deployerRole.wait();
+  const administratorRole = await factory.grantRole(
+    '0xb73ce166ead2f8e9add217713a7989e4edfba9625f71dfd2516204bb67ad3442',
+    entryPoint.target
+  );
+  await administratorRole.wait();
 
   const TickLensFactory = await hre.ethers.getContractFactory('TickLens');
   const TickLens = await TickLensFactory.deploy();

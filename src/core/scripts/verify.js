@@ -24,10 +24,9 @@ async function main() {
   });
 
   await hre.run('verify:verify', {
-    contract: "contracts/AlgebraVaultFactoryStub.sol:AlgebraVaultFactoryStub",
+    contract: 'contracts/AlgebraVaultFactoryStub.sol:AlgebraVaultFactoryStub',
     address: deploysData.vaultFactory,
     constructorArguments: [deploysData.vault],
-
   });
 }
 
